@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>A.getJS Exec Order Experiment</title>
+</head>
+<body>
+
+<div id="log"></div>
+
+<script type="text/javascript" src="../A.getjs.js"></script>
+<script type="text/javascript">
+(function( win, doc ){
+
+win.A || (A={});
+
+function now() {
+	return new Date().getTime();
+}
+
+var logList,
+	logItems = [],
+	startTime = now();
+	
+A.log = function( msg, ul ) {
+	
+	logItems.push( (now() - startTime) + "ms: " + msg );
+
+	if ( logList || 
+	   ( logList = ul ) || 
+	   ( (logList = doc.createElement("div")) && doc.body.appendChild(logList) ) ) {
+		logList.innerHTML = ["<ul><li>", logItems.join("</li><li>"), "</li></ul>"].join('');
+	}
+};
+
+})(window, document);
+
+
+A.getJS("javascript.php?num=1&sleep=2,javascript.php?num=2", function(){
+	A.log("<b>Executing callback: javascript.php?num=1,javascript.php?num=2</b>");
+}).getJS("javascript.php?num=4", function(){
+	A.log("<b>Executing callback: javascript.php?num=4</b>");
+}).getJS("javascript.php?num=5");/*, function(){
+	A.log("<b>Executing <i>final</i> callback: javascript.php?num=5</b>");
+});*/
+
+/*
+	Fetch first as text/javascript since it needs to execute first.
+	Grab subsequent as text/html and then convert them to text/javascript 
+	only after the previous has finished downloaded AND executed as text/javascript.
+*/
+A.getJS("javascript.php?num=3", function(){
+	A.log("<b>Executing <i>final</i> callback: javascript.php?num=3</b>");
+});
+
+</script>
+
+</body>
+</html>
