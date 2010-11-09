@@ -36,15 +36,15 @@ function getScript ( url, callback, type ) {
 			// Set scriptDone to prevent this function from being called twice.
 			done = 1;
 
-			callback( url, type );
+			callback( url );
 			
 			// Handle memory leak in IE
 			script[ strOnLoad ] = script[ strOnReadyStateChange ] = null;
-			head.removeChild( script );
+			docElement.removeChild( script );
 		}
 	};
 	
-	head.appendChild( script );
+	docElement.appendChild( script );
 }
 	
 function getJS ( urlKey, urlKeyCallback ) {
@@ -54,7 +54,7 @@ function getJS ( urlKey, urlKeyCallback ) {
 		++urlCount == urlCountTotal && urlKeyCallback && urlKeyCallback();
 	}
 		
-	function getJSCallback ( url, type ) {
+	function getJSCallback ( url ) {
 			
 		function executeJS () {
 			
@@ -149,10 +149,10 @@ function getJS ( urlKey, urlKeyCallback ) {
 		getJS: getJS
 	}
 }
-	// Artz: To make this smaller, can we just attach the
-	// script to the document element?
+
 var	docElement = document.documentElement,
-	head = document.getElementsByTagName("head")[0] || docElement,
+//	Artz: Just making things smaller, uncomment if people care.
+//	head = document.getElementsByTagName("head")[0] || docElement,  
 	urlKeyCallbacks = {},
 	urlCached = {},
 	urlExecuted = {},
