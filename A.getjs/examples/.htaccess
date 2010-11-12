@@ -1,0 +1,3 @@
+<FilesMatch "\.(txt|xml|js|css|php)$">
+Header set Cache-Control "max-age=10800"
+</FilesMatch>
