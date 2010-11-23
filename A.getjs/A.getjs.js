@@ -51,49 +51,49 @@ function getObject ( elem, url, callback, type ) {
 
 function getJS ( urlKey, urlKeyCallback ) {
 	
-	function getJSCallback ( url ) {
+	function executeJS () {
 		
-		function executeJS () {
+		function executeCallback () {
 			
-			function executeCallback () {
+			// If all scripts have been cached in the set, it's time
+			// to execute the urlKey callback after the script loads.
+			if ( ++cacheCount == thisUrlsCount ) {
 				
-				// If all scripts have been cached in the set, it's time
-				// to execute the urlKey callback after the script loads.
-				if ( ++cacheCount == thisUrlsCount ) {
-					
-					// Execute the callback associated with this urlKey
-					thisUrlKeyCallback && thisUrlKeyCallback();
-					
-					// Kill the first item in the url chain and redo executeJS
-					urlKeyChain.shift();
-					executeJS();
-				}
-			}
-			
-			for ( var i = 0,
-				thisUrlKey = urlKeyChain[0] || "",
-				thisUrls = thisUrlKey.split( urlSplit ),
-				thisUrl,
-				thisUrlsCount = thisUrls.length,
-				thisUrlKeyCallback = urlKeyCallbacks[ thisUrlKey ],
-				cacheCount = 0; i < thisUrlsCount; i++ ) {
+				// Execute the callback associated with this urlKey
+				thisUrlKeyCallback && thisUrlKeyCallback();
 				
-				thisUrl = thisUrls[i];
-				
-				if ( urlCached[ thisUrl ] ) {
-					if ( urlExecuted[ thisUrl ] ) {
-						// If we already executed, just do the callback.
-						executeCallback();					
-					} else {
-						// Rememeber that this script already executed.
-						urlExecuted[ thisUrl ] = 1;
-						type = ""; // Clear out the type so we load normally.
-						getObject( strScript, thisUrl, executeCallback, type );	
-					}
-				}
+				// Kill the first item in the url chain and redo executeJS
+				urlKeyChain.shift();
+				executeJS();
 			}
 		}
 		
+		for ( var i = 0,
+			thisUrlKey = urlKeyChain[0] || "",
+			thisUrls = thisUrlKey.split( urlSplit ),
+			thisUrl,
+			thisUrlsCount = thisUrls.length,
+			thisUrlKeyCallback = urlKeyCallbacks[ thisUrlKey ],
+			cacheCount = 0; i < thisUrlsCount; i++ ) {
+			
+			thisUrl = thisUrls[i];
+			
+			if ( urlCached[ thisUrl ] ) {
+				if ( urlExecuted[ thisUrl ] ) {
+					// If we already executed, just do the callback.
+					executeCallback();					
+				} else {
+					// Rememeber that this script already executed.
+					urlExecuted[ thisUrl ] = 1;
+					type = ""; // Clear out the type so we load normally.
+					getObject( strScript, thisUrl, executeCallback, type );	
+				}
+			}
+		}
+	}
+	
+	function getJSCallback ( url ) {
+
 		// Remember that we have this script cached.
 		urlCached[ url ] = 1;
 		
