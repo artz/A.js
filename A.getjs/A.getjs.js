@@ -18,10 +18,12 @@
 */
 (function( document ) {
 
+// Artz: Consider implementing Image() for IE? Might be more bloaty.
+// http://platform.aol.com/code/upusi/2/edit
 function getObject ( elem, url, callback, type ) {
 	
 	var	object = document.createElement( elem ),
-	done = 0;
+		done = 0;
 	
 	object.src = object.data = url;
 	object.type = type;
@@ -101,7 +103,6 @@ function getJS ( urlKey, urlKeyCallback ) {
 	}
 	
 	var urls = urlKey.split( urlSplit ),
-		urlCount = 0,
 		urlCountTotal = urls.length,
 		i = 0,
 		elem = strScript,
@@ -144,7 +145,7 @@ function getJS ( urlKey, urlKeyCallback ) {
 	return {
 		c: urlKeyChain,
 		getJS: getJS
-	}
+	};
 }
 
 var	docElement = document.documentElement,
