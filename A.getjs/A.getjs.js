@@ -27,6 +27,7 @@ function getObject ( elem, url, callback, type ) {
 	
 	object.src = object.data = url;
 	object.type = type;
+	object.width = object.height = 0;
 	
 	// Attach handlers for all browsers
 	object[ strOnLoad ] = object[ strOnReadyStateChange ] = function() {
