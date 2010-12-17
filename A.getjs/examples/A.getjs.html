@@ -35,7 +35,7 @@ A.log = function( msg, ul ) {
 
 })(window, document);
 
-
+A.log("Starting...");
 A.getJS("javascript.php?num=1&sleep=2,javascript.php?num=2", function(){
 	A.log("<b>Executing callback: javascript.php?num=1,javascript.php?num=2</b>");
 }).getJS("javascript.php?num=4", function(){
