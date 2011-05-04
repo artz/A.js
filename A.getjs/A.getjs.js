@@ -1,6 +1,6 @@
 
 /*
- * A.getJS v0.9
+ * A.getJS v0.9.1
  * http://www.artzstudio.com/A.js/getJS/
  *
  * Developed by: 
@@ -119,8 +119,7 @@ function getJS ( urlKey, urlKeyCallback ) {
 		type,
 		urlKeyChain = this.c; // Contains an arays of urlKeys of this chain, if available.
 		
-	// Gecko does what we want out of the box, sort of.
-	// Bypass our super special callback.
+	// If the browser supports async scripts, bypass our special callback.
 	if ( isScriptAsync ) {
 		
 		getJSCallback = geckoCallback;
@@ -159,10 +158,7 @@ function getJS ( urlKey, urlKeyCallback ) {
 	};
 }
 
-var	firstScript = document.getElementsByTagName("script")[0],
-	firstScriptParent = firstScript.parentNode,
-	
-	urlKeyCallbacks = {},
+var	urlKeyCallbacks = {},
 	urlCached = {},
 	urlExecuted = {},
 	urlSplit = ",",	
@@ -172,8 +168,11 @@ var	firstScript = document.getElementsByTagName("script")[0],
 	strOnLoad = "onload",
 	strScript = "script",
 	
-	// If the browser supports asynchronous executing scripts. (Firefox 3.6, Chrome 12)
-	isScriptAsync = "MozAppearance" in document.documentElement.style || window.opera || document.createElement( strScript ).async === true;
+	// If the browser supports asynchronous executing scripts. (Firefox 3.6, Opera, Chrome 12)
+	isScriptAsync = "MozAppearance" in document.documentElement.style || window.opera || document.createElement( strScript ).async === true,
+	
+	firstScript = document.getElementsByTagName( strScript )[0],
+	firstScriptParent = firstScript.parentNode;
 
 // Open A.getJS for business!
 this.A || (A = {});
