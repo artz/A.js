@@ -1,3 +1,4 @@
+
 /*
  * A.getJS v0.9
  * http://www.artzstudio.com/A.js/getJS/
@@ -5,7 +6,7 @@
  * Developed by: 
  * - Dave Artz http://www.artzstudio.com/
  *
- * Copyright (c) 2010
+ * Copyright (c) 2011
  * Not yet licensed cuz I lack free time.
  */
  
@@ -20,7 +21,7 @@
 
 function getScript ( url, callback, type ) {
 
-	var	script = document.createElement("script"),
+	var	script = document.createElement( strScript ),
 		done = 0;
 	
 	script.src = url;
@@ -30,7 +31,7 @@ function getScript ( url, callback, type ) {
 	// https://developer.mozilla.org/En/HTML/Element/Script
 	// We basically make it synchronously like in FF3.
 	// Not ideal, but we found <object> to be slower
-	// DOM nodes.
+	// DOM nodes in Firefox.
 	script.async = false;
 	
 	// Attach handlers for all browsers
@@ -47,11 +48,12 @@ function getScript ( url, callback, type ) {
 			
 			// Handle memory leak in IE
 			script[ strOnLoad ] = script[ strOnReadyStateChange ] = null;
-			docElement.removeChild( script );
+			firstScriptParent.removeChild( script );
 		}
 	};
 	
-	docElement.appendChild( script );
+	// This is the safest insertion point to assume.
+	firstScriptParent.insertBefore( script, firstScript );
 }
 	
 function getJS ( urlKey, urlKeyCallback ) {
@@ -119,7 +121,7 @@ function getJS ( urlKey, urlKeyCallback ) {
 		
 	// Gecko does what we want out of the box, sort of.
 	// Bypass our super special callback.
-	if ( isGecko ) {
+	if ( isScriptAsync ) {
 		
 		getJSCallback = geckoCallback;
 		
@@ -157,9 +159,9 @@ function getJS ( urlKey, urlKeyCallback ) {
 	};
 }
 
-var	docElement = document.documentElement,
-//	Artz: Just making things smaller, uncomment if people care.
-//	head = document.getElementsByTagName("head")[0] || docElement,  
+var	firstScript = document.getElementsByTagName("script")[0],
+	firstScriptParent = firstScript.parentNode,
+	
 	urlKeyCallbacks = {},
 	urlCached = {},
 	urlExecuted = {},
@@ -168,8 +170,10 @@ var	docElement = document.documentElement,
 	strReadyState = "readyState",
 	strOnReadyStateChange = "onreadystatechange",
 	strOnLoad = "onload",
+	strScript = "script",
 	
-	isGecko = ("MozAppearance" in docElement.style);
+	// If the browser supports asynchronous executing scripts. (Firefox 3.6, Chrome 12)
+	isScriptAsync = "MozAppearance" in document.documentElement.style || window.opera || document.createElement( strScript ).async === true;
 
 // Open A.getJS for business!
 this.A || (A = {});
